@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+
+    stages {
+        stage("Build") {
+            steps {
+               script{
+                   echo "building the app.."
+                 
+               }
+            }
+        }
+        stage("Build image") {
+            steps {
+               script{
+                   echo "building the docker image.."
+                   withCredentials([usernamePassword(credentialsId: 'docker-hub',usernameVariable: 'USER', passwordVariable: 'PASS')]){
+                   sh 'docker build -t mohamedtarekelsayed/jenkins:jenkins-with-docker /'
+                   sh "echo $PASS | docker login -u $USER --password-stdin"
+                   sh 'docker push  mohamedtarekelsayed/jenkins:jenkins-with-docker '
+                   } 
+               }   
+            }
+        }
+    }
+}
